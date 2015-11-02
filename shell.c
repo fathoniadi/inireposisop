@@ -29,7 +29,7 @@ int main()
 
 	while(1)
 	{
-		signal(SIGQ,signhndlr_c_z);
+		signal(SIGTSTP,signhndlr_c_z);
 		signal(SIGINT,signhndlr_c_z);
 		input=insertinput(&daemon);
 		args=splitinput(input);
@@ -109,31 +109,35 @@ char **splitinput(char *input)
 
 int execinput(char **args, int daemon)
 {
+	int status;
+	if(daemon==0) status=launchinputnormal(args);
+	else; //status=launchinputdaemon(args);
+}
+
+
+int launchinputnormal(char **args)
+{
 	pid_t pid, wpid;
-  int status;
+  	int status;
 
-  pid = fork();
+	pid = fork();
 
-  if (pid == 0) {
-    // Child process
-    int a=(int)wpid;
-    printf("Status %d\n",a);
-    //if(strcmp(args[0],"cd")==0)
-    /*if (execvp(arg[0], args) == -1) {
-      perror("lsh");
-    }*/
-    if (execvp(args[0], args) == -1) {
-      perror("lsh");
-    }
-    
-    exit(0);
-  } else if (pid < 0) {
-    // Error forking
-    perror("lsh");
-  } else {
-    // Parent process
-    wait(0);
-  }
+	  if (pid == 0) {
+	    // Child process
+	    int a=(int)wpid;
+	    printf("Status %d\n",a);
+	    if (execvp(args[0], args) == -1) {
+	      perror("lsh");
+	    }
+	    
+	    exit(0);
+	  } else if (pid < 0) {
+	    // Error forking
+	    perror("lsh");
+	  } else {
+	    // Parent process
+	    wait(0);
+	  }
 
-  return 1;
+	  return 1;
 }
