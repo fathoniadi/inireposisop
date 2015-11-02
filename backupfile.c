@@ -41,9 +41,9 @@ int main()
 	strcat(name_file[1].file,".backup1");
 	strcat(name_file[1].file_backup,".backup2");
 	
-	pthread_create(&thread1,NULL,copyfile,(void *)&name_file[0]);	
-	pthread_join(thread1,NULL);
+	pthread_create(&thread1,NULL,copyfile,(void *)&name_file[0]);		
 	pthread_create(&thread2,NULL,copyfile,(void *)&name_file[1]);
+	pthread_join(thread1,NULL);	
 	pthread_join(thread2,NULL);	
 	
 }
