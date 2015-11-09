@@ -34,7 +34,7 @@ int main()
 		signal(SIGINT,signhndlr_c_z);
 		input=insertinput(&daemon,&exit_eof);
 		if(exit_eof==1) break;
-		printf("daemon %d\n",daemon);
+		
 		args=splitinput(input);
 		if(strcmp(args[0],"exit")==0) break;
 		status=execinput(args,daemon);
@@ -128,8 +128,6 @@ int launchinputnormal(char **args)
 
   	if(strcmp(args[0],"cd")==0)
 	    {
-	    	printf("a%sa\n",args[1]);
-	    	printf("cd\n");
 	    	chdir(args[1]);
 	    }
 	else
