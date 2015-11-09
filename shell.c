@@ -134,7 +134,10 @@ int launchinputnormal(char **args)
 
   	if(strcmp(args[0],"cd")==0)
 	    {
-	    	chdir(args[1]);
+	    	if(chdir(args[1])!=0) 
+	    	{
+	    		printf("Cannot move to directory\n");
+	    	}
 	    }
 	else
 	{
