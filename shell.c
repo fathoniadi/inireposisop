@@ -9,7 +9,7 @@
 #define STR_SIZE 64
 
 
-char *insertinput(int *);
+char *insertinput(int *, int *);
 char **splitinput(char *);
 int execinput(char **, int);
 int launchinputnormal(char **);
@@ -23,7 +23,8 @@ int main()
 	char *input;
 	char **args;
 	int status=1;
-	int daemon;
+	int daemon=0;
+	int exit_eof=0;
 	
 
 
@@ -31,14 +32,16 @@ int main()
 	{
 		signal(SIGTSTP,signhndlr_c_z);
 		signal(SIGINT,signhndlr_c_z);
-		input=insertinput(&daemon);
+		input=insertinput(&daemon,&exit_eof);
+		if(exit_eof==1) break;
+		printf("daemon %d\n",daemon);
 		args=splitinput(input);
-		printf("%d\n",daemon);
 		if(strcmp(args[0],"exit")==0) break;
 		status=execinput(args,daemon);
 		free(input);
 		free(args);
 		daemon=0;
+		exit_eof=0;
 	}
 
 	return EXIT_SUCCESS;
@@ -49,7 +52,7 @@ void signhndlr_c_z(int signalnum)
 	
 }
 
-char * insertinput(int *daemon)
+char * insertinput(int *daemon, int *exit_eof)
 {
 	char a;
 	int counter=0;
@@ -58,11 +61,15 @@ char * insertinput(int *daemon)
 	printf("E03Shell > ");
 	while(1)
 	{
-		scanf("%c",&a);
-		if(a==EOF) printf("aaaa\n");
-		if(a=='&') *daemon=1; 
+		a=getchar();
+		if(a==EOF) 
+		{
+			*exit_eof=1;
+			break; 
+		}
 		if(a=='\n')
 		{
+			if(character[counter-1]=='&') *daemon=1;
 			character[counter]='\0';
 			return character;
 		}
@@ -78,7 +85,6 @@ char * insertinput(int *daemon)
 			character=realloc(character, charsize);
 		}
 	}
-	//return character;
 }
 
 char **splitinput(char *input)
@@ -117,27 +123,35 @@ int execinput(char **args, int daemon)
 
 int launchinputnormal(char **args)
 {
-	pid_t pid, wpid;
+	pid_t pid;
   	int status;
 
-	pid = fork();
+  	if(strcmp(args[0],"cd")==0)
+	    {
+	    	printf("a%sa\n",args[1]);
+	    	printf("cd\n");
+	    	chdir(args[1]);
+	    }
+	else
+	{
+		pid = fork();
 
 	  if (pid == 0) {
 	    // Child process
-	    int a=(int)wpid;
-	    printf("Status %d\n",a);
-	    if (execvp(args[0], args) == -1) {
+	    if (execvp(args[0], args) == -1) 
+	    {
 	      perror("lsh");
 	    }
 	    
 	    exit(0);
 	  } else if (pid < 0) {
 	    // Error forking
-	    perror("lsh");
+	    //perror("lsh");
 	  } else {
 	    // Parent process
 	    wait(0);
 	  }
+	}
 
 	  return 1;
 }
