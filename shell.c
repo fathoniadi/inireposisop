@@ -136,7 +136,7 @@ int launchinputnormal(char **args)
 	    {
 	    	if(chdir(args[1])!=0) 
 	    	{
-	    		printf("Cannot move to directory\n");
+	    		printf("E03: cd: %s: No such file or directory\n",args[1]);
 	    	}
 	    }
 	else
@@ -147,7 +147,7 @@ int launchinputnormal(char **args)
 	  	{
 		    if (execvp(args[0], args) == -1) 
 		    {
-		      perror("E03");
+		      printf("%s: command not found\n",args[0]);
 		    }
 	    	exit(0);
 	  	} 
