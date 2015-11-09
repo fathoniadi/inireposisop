@@ -70,7 +70,11 @@ char * insertinput(int *daemon, int *exit_eof)
 		if(a=='\n')
 		{
 			if(character[counter-1]=='&') *daemon=1;
-			if(flag==1) continue;
+			if(flag==1) 
+			{
+				printf("E03Shell > ");
+				continue;
+			}
 			character[counter]='\0';
 			return character;
 		}
