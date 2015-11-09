@@ -34,7 +34,6 @@ int main()
 		signal(SIGINT,signhndlr_c_z);
 		input=insertinput(&daemon,&exit_eof);
 		if(exit_eof==1) break;
-		
 		args=splitinput(input);
 		if(strcmp(args[0],"exit")==0) break;
 		status=execinput(args,daemon);
@@ -59,6 +58,7 @@ char * insertinput(int *daemon, int *exit_eof)
 	int charsize=CHAR_SIZE;
 	char *character=malloc(sizeof(char)*CHAR_SIZE);
 	printf("E03Shell > ");
+	int flag=1;
 	while(1)
 	{
 		a=getchar();
@@ -70,6 +70,7 @@ char * insertinput(int *daemon, int *exit_eof)
 		if(a=='\n')
 		{
 			if(character[counter-1]=='&') *daemon=1;
+			if(flag==1) continue;
 			character[counter]='\0';
 			return character;
 		}
@@ -84,6 +85,7 @@ char * insertinput(int *daemon, int *exit_eof)
 			charsize+=CHAR_SIZE;
 			character=realloc(character, charsize);
 		}
+		flag=0;
 	}
 }
 
@@ -134,21 +136,22 @@ int launchinputnormal(char **args)
 	{
 		pid = fork();
 
-	  if (pid == 0) {
-	    // Child process
-	    if (execvp(args[0], args) == -1) 
-	    {
-	      perror("lsh");
-	    }
-	    
-	    exit(0);
-	  } else if (pid < 0) {
-	    // Error forking
-	    //perror("lsh");
-	  } else {
-	    // Parent process
-	    wait(0);
-	  }
+	  	if (pid == 0) 
+	  	{
+		    if (execvp(args[0], args) == -1) 
+		    {
+		      perror("E03");
+		    }
+	    	exit(0);
+	  	} 
+	  	else if (pid < 0) 
+	  	{
+	    	perror("E03");
+	  	} 
+	  	else 
+	  	{
+	    	wait(0);
+	  	}
 	}
 
 	  return 1;
