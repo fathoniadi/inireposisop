@@ -11,9 +11,9 @@
 
 char *insertinput(int *, int *);
 char **splitinput(char *);
-int execinput(char **, int);
-int launchinputnormal(char **);
-int launchinputdaemon(char **);
+void execinput(char **, int);
+void launchinputnormal(char **);
+void launchinputdaemon(char **);
 void signhndlr_c_z(int signalnum);
 
 
@@ -22,7 +22,6 @@ int main()
 {
 	char *input;
 	char **args;
-	int status=1;
 	int daemon=0;
 	int exit_eof=0;
 	
@@ -36,7 +35,7 @@ int main()
 		if(exit_eof==1) break;
 		args=splitinput(input);
 		if(strcmp(args[0],"exit")==0) break;
-		status=execinput(args,daemon);
+		execinput(args,daemon);
 		free(input);
 		free(args);
 		daemon=0;
@@ -118,16 +117,15 @@ char **splitinput(char *input)
 	return tokens;
 }
 
-
-int execinput(char **args, int daemon)
+void execinput(char **args, int daemon)
 {
 	int status;
-	if(daemon==0) status=launchinputnormal(args);
+	if(daemon==0) launchinputnormal(args);
 	else; //status=launchinputdaemon(args);
 }
 
 
-int launchinputnormal(char **args)
+void launchinputnormal(char **args)
 {
 	pid_t pid;
   	int status;
@@ -161,5 +159,4 @@ int launchinputnormal(char **args)
 	  	}
 	}
 
-	  return 1;
 }
