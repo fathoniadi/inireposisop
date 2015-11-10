@@ -12,8 +12,6 @@
 char *insertinput(int *, int *);
 char **splitinput(char *);
 void execinput(char **, int);
-void launchinputnormal(char **);
-void launchinputbackground(char **);
 void signhndlr_c_z(int signalnum);
 
 
@@ -120,50 +118,26 @@ char **splitinput(char *input)
 
 void execinput(char **args, int background)
 {
-
-	if(background==0) launchinputnormal(args);
-	else launchinputbackground(args);
-}
-
-
-void launchinputbackground(char **args)
-{
-	pid_t pid;
-	pid = fork();
-	if (pid < 0) {
-		exit(EXIT_FAILURE);
-	}
-	if (pid > 0) {
-		
-	}
-	else
-	{
-		if (execvp(args[0], args) == -1) 
-	    {
-	      printf("%s: command not found\n",args[0]);
-	    }
-	}
-
-
-}
-
-void launchinputnormal(char **args)
-{
+	
 	pid_t pid;
 
   	if(strcmp(args[0],"cd")==0)
 	    {
-	    	if(args[1]==NULL)
+	    	if(background==0)
 	    	{
-	    		chdir("/");
-	    	}
-	    	else
-	    	{
-		    	if(chdir(args[1])!=0) 
+		    	if(args[1]==NULL)
 		    	{
-		    		printf("E03: cd: %s: No such file or directory\n",args[1]);
+		    		chdir("/");
 		    	}
-		    }
+		    	else
+		    	{
+			    	if(chdir(args[1])!=0) 
+			    	{
+			    		printf("E03: cd: %s: No such file or directory\n",args[1]);
+			    	}
+			    }
+			}
+
 	    }
 	else
 	{
@@ -183,8 +157,9 @@ void launchinputnormal(char **args)
 	  	} 
 	  	else 
 	  	{
-	  		wait(0);
+	  		if(background==0) wait(0);
 	  	}
 	}
 
 }
+
