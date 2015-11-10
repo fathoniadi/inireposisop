@@ -13,7 +13,7 @@ char *insertinput(int *, int *);
 char **splitinput(char *);
 void execinput(char **, int);
 void launchinputnormal(char **);
-void launchinputdaemon(char **);
+void launchinputbackground(char **);
 void signhndlr_c_z(int signalnum);
 
 
@@ -22,7 +22,7 @@ int main()
 {
 	char *input;
 	char **args;
-	int daemon=0;
+	int background=0;
 	int exit_eof=0;
 	
 
@@ -31,14 +31,14 @@ int main()
 	{
 		signal(SIGTSTP,signhndlr_c_z);
 		signal(SIGINT,signhndlr_c_z);
-		input=insertinput(&daemon,&exit_eof);
+		input=insertinput(&background,&exit_eof);
 		if(exit_eof==1) break;
 		args=splitinput(input);
 		if(strcmp(args[0],"exit")==0) break;
-		execinput(args,daemon);
+		execinput(args,background);
 		free(input);
 		free(args);
-		daemon=0;
+		background=0;
 		exit_eof=0;
 	}
 
@@ -50,7 +50,7 @@ void signhndlr_c_z(int signalnum)
 	
 }
 
-char * insertinput(int *daemon, int *exit_eof)
+char * insertinput(int *background, int *exit_eof)
 {
 	char a;
 	int counter=0;
@@ -68,7 +68,7 @@ char * insertinput(int *daemon, int *exit_eof)
 		}
 		if(a=='\n')
 		{
-			if(character[counter-1]=='&') *daemon=1;
+			if(character[counter-1]=='&') *background=1;
 			if(flag==1) 
 			{
 				printf("E03Shell > ");
@@ -113,22 +113,43 @@ char **splitinput(char *input)
 		}
 		token=strtok(NULL,STR_DELIMS);
 	}
+	if(strcmp(tokens[counter-1],"&")==0) tokens[counter-1]=NULL;
 	tokens[counter]=NULL;
 	return tokens;
 }
 
-void execinput(char **args, int daemon)
+void execinput(char **args, int background)
 {
-	int status;
-	if(daemon==0) launchinputnormal(args);
-	else; //status=launchinputdaemon(args);
+
+	if(background==0) launchinputnormal(args);
+	else launchinputbackground(args);
 }
 
+
+void launchinputbackground(char **args)
+{
+	pid_t pid;
+	pid = fork();
+	if (pid < 0) {
+		exit(EXIT_FAILURE);
+	}
+	if (pid > 0) {
+		
+	}
+	else
+	{
+		if (execvp(args[0], args) == -1) 
+	    {
+	      printf("%s: command not found\n",args[0]);
+	    }
+	}
+
+
+}
 
 void launchinputnormal(char **args)
 {
 	pid_t pid;
-  	int status;
 
   	if(strcmp(args[0],"cd")==0)
 	    {
@@ -154,7 +175,7 @@ void launchinputnormal(char **args)
 		    {
 		      printf("%s: command not found\n",args[0]);
 		    }
-	    	exit(0);
+	    	exit(EXIT_FAILURE);
 	  	} 
 	  	else if (pid < 0) 
 	  	{
@@ -162,7 +183,7 @@ void launchinputnormal(char **args)
 	  	} 
 	  	else 
 	  	{
-	    	wait(0);
+	  		wait(0);
 	  	}
 	}
 
