@@ -72,6 +72,19 @@ char * insertinput(int *background, int *exit_eof)
 				printf("E03Shell > ");
 				continue;
 			}
+			if(character[0]=='&')
+			{
+				printf("E03: syntax error near unexpected token `&'\n");
+				printf("E03Shell > ");
+				counter=0;
+				continue;
+			}
+			if((int)character[0]==32&&counter==1) 
+			{
+				printf("E03Shell > ");
+				counter=0;
+				continue;
+			}
 			character[counter]='\0';
 			return character;
 		}
@@ -96,7 +109,6 @@ char **splitinput(char *input)
 	char **tokens=malloc(sizeof(char*)*strsize);
 	char *token;
 	int counter=0;
-
 	token=strtok(input, STR_DELIMS);
 	
 	while(token!=NULL)
@@ -111,16 +123,14 @@ char **splitinput(char *input)
 		}
 		token=strtok(NULL,STR_DELIMS);
 	}
-	if(strcmp(tokens[counter-1],"&")==0) tokens[counter-1]=NULL;
+	if(strcmp(tokens[counter-1],"&")==0&&counter>0) tokens[counter-1]=NULL;
 	tokens[counter]=NULL;
 	return tokens;
 }
 
 void execinput(char **args, int background)
 {
-	
 	pid_t pid;
-
   	if(strcmp(args[0],"cd")==0)
 	    {
 	    	if(background==0)
