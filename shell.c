@@ -79,7 +79,8 @@ char * insertinput(int *background, int *exit_eof)
 				counter=0;
 				continue;
 			}
-			if((int)character[0]==32&&counter==1) 
+			//\r 13 \t 9 \f 12 \a 7 \b 32
+			if((int)character[0]==32||(int)character[0]==9||(int)character[0]==13||(int)character[0]==12||(int)character[0]==7&&counter==1) 
 			{
 				printf("E03Shell > ");
 				counter=0;
