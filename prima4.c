@@ -6,8 +6,8 @@
 //int count=0;
 
 typedef struct cekprima{
-	int num;
-	int count;
+	int num;//angka yang sedang di cek
+	int count;//sebagai penanda bilangan prima ata bukan
 }cekprima;
 void *prima(void *arg)
 {
@@ -25,27 +25,28 @@ void *prima(void *arg)
 	if(counter==2)
 	{	
 		cek->count++;
-		printf("%d %d\n",cek->num, cek->count);
+		//printf("%d %d\n",cek->num, cek->count);
 	}
 }
 
 int main()
 {
 
-	int i,j,c=0,z;
-	scanf("%d", &z);
-	cekprima cek[z];
-	pthread_t thread[z];
+	int i,j,c=0,testcase;
+	printf("Masukkan batas :");
+	scanf("%d", &testcase);
+	cekprima cek[testcase];
+	pthread_t thread[testcase];
 	//cek.count=0;
-	for(i=1;i<=z;i++){
+	for(i=1;i<=testcase;i++){
 		//cekprima *cek=malloc(sizeof(*cek));		
 		cek[i].num=i;
-		pthread_create(&thread[i],NULL,prima,(void*)&cek[i]);	
+		pthread_create(&thread[i],NULL,prima,(void*)&cek[i]);//membuat thread baru sejumlah N	
 	}
-	for(i=1;i<=z;i++){
+	for(i=1;i<=testcase;i++){
 		pthread_join(thread[i],NULL);
 		c=c+cek[i].count;
 	}
-	printf("%d\n",c);
+	printf("Jumlah Bilangan Prima sampai angka %d adalah %d\n",testcase,c);//mencetak jumlah bilangan prima sampai dengan N/testcase
 
 }
