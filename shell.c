@@ -132,10 +132,17 @@ void launchinputnormal(char **args)
 
   	if(strcmp(args[0],"cd")==0)
 	    {
-	    	if(chdir(args[1])!=0) 
+	    	if(args[1]==NULL)
 	    	{
-	    		printf("E03: cd: %s: No such file or directory\n",args[1]);
+	    		chdir("/");
 	    	}
+	    	else
+	    	{
+		    	if(chdir(args[1])!=0) 
+		    	{
+		    		printf("E03: cd: %s: No such file or directory\n",args[1]);
+		    	}
+		    }
 	    }
 	else
 	{
