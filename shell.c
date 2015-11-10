@@ -54,8 +54,9 @@ char * insertinput(int *background, int *exit_eof)
 	int counter=0;
 	int charsize=CHAR_SIZE;
 	char *character=malloc(sizeof(char)*CHAR_SIZE);
-	printf("E03Shell > ");
 	int flag=1;
+
+	printf("E03Shell > ");
 	while(1)
 	{
 		a=getchar();
@@ -79,13 +80,10 @@ char * insertinput(int *background, int *exit_eof)
 				counter=0;
 				continue;
 			}
-			//\r 13 \t 9 \f 12 \a 7 \b 32
-			if((int)character[0]==32||(int)character[0]==9||(int)character[0]==13||(int)character[0]==12||(int)character[0]==7&&counter==1) 
-			{
-				printf("E03Shell > ");
-				counter=0;
-				continue;
-			}
+				//\r 13 \t 9 \f 12 \a 7 \b 32
+			
+
+			
 			character[counter]='\0';
 			return character;
 		}
